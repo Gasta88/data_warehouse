@@ -50,7 +50,7 @@ staging_songs_table_create = ("""CREATE TABLE IF NOT EXISTS songs_stg(song_id TE
 """)
 
 songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplay(songplay_id INTEGER IDENTITY(1,1) PRIMARY KEY,
-                                                        start_time BIGINT NOT NULL REFERENCES time(start_time) sortkey,
+                                                        start_time TIMESTAMP NOT NULL REFERENCES time(start_time) sortkey,
                                                         user_id TEXT NOT NULL REFERENCES users(user_id),
                                                         level TEXT ,
                                                         song_id TEXT NOT NULL REFERENCES songs(song_id) distkey,
@@ -122,7 +122,10 @@ songplay_table_insert = ("""INSERT INTO songplay
                          FROM songs_stg s RIGHT JOIN events_stg e 
                                           ON (s.artist_name = e.artist AND 
                                               s.title = e.song)
-                        WHERE e.page = 'NextSong';""")
+                        WHERE e.page = 'NextSong' AND
+                              e.ts IS NOT NULL AND
+                              s.song_id IS NOT NULL AND
+                              s.artist_id IS NOT NULL;""")
 
 user_table_insert = ("""INSERT INTO users
                      (user_id, first_name, last_name, gender, level)

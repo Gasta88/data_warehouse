@@ -41,7 +41,40 @@ All files are in JSON format and these are manipulated via the `etl.py` script b
 2. After that run `python etl.py` to populate the tables with song and log data.
 
 ## Query examples
- *TODO*
+
+Query to check the number of songs listened by gender and level:
+
+```
+SELECT user.gender, user.level, sum(songplay.song_id) AS num_songs
+FROM songplay JOIN user ON (songplay.user_id=user.user_id)
+GROUP BY (user.gender, user.level);
+```
+
+Query the average length of the longest 25 songs played per artist:
+
+```
+SELECT artist.artist_name, AVG(song.duration) AS avg_duration
+FROM songplay JOIN artist ON (songplay.artist_id=artist.artist_id)
+              JOIN song ON (songplay.song_id = song.song_id)
+GROUP BY artist.artist_name
+ORDER BY avg_duration
+LIMIT 25;
+```
+
+Query to set up a CUBE on the amount of total songs played by year, artist from the Northern/Southern emisphere  and user gender:
+
+```
+SELECT main.year, main.artist_emisphere, main.gender, SUM(main.song_id) AS num_songs
+FROM
+    (SELECT song.year, 
+           CASE WHEN artist.latitude>0 THEN 'Northern' else 'Southern' END AS artist_emisphere,
+           user.gender,
+           songplay.song_id
+    FROM songplay JOIN song ON (songplay.song_id=song.song_id)
+                  JOIN artist ON (songplay.artist_id=artist.artist_id)
+                  JOIN user ON (songplay.user_id=user.user_id)) AS main
+GROUP BY CUBE (main.year, main.artist_emisphere, main.gender);
+```
  
  
 ## Files in the repo
