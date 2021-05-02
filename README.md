@@ -45,35 +45,38 @@ All files are in JSON format and these are manipulated via the `etl.py` script b
 Query to check the number of songs listened by gender and level:
 
 ```
-SELECT user.gender, user.level, sum(songplay.song_id) AS num_songs
-FROM songplay JOIN user ON (songplay.user_id=user.user_id)
-GROUP BY (user.gender, user.level);
+SELECT u.gender,u.level, COUNT(sp.song_id) AS num_songs
+FROM songplay sp JOIN users u ON (sp.user_id=u.user_id)
+GROUP BY u.gender, u.level;
+
 ```
 
 Query the average length of the longest 25 songs played per artist:
 
 ```
-SELECT artist.artist_name, AVG(song.duration) AS avg_duration
-FROM songplay JOIN artist ON (songplay.artist_id=artist.artist_id)
-              JOIN song ON (songplay.song_id = song.song_id)
-GROUP BY artist.artist_name
+SELECT a.name, AVG(s.duration) AS avg_duration
+FROM songplay sp JOIN artists a ON (sp.artist_id=a.artist_id)
+              JOIN songs s ON (sp.song_id = s.song_id)
+GROUP BY a.name
 ORDER BY avg_duration
 LIMIT 25;
-```
-
-Query to set up a CUBE on the amount of total songs played by year, artist from the Northern/Southern emisphere  and user gender:
 
 ```
-SELECT main.year, main.artist_emisphere, main.gender, SUM(main.song_id) AS num_songs
+
+Query the amount of total songs played by year and artist from the Northern/Southern emisphere:
+
+```
+SELECT main.year, main.artist_emisphere, COUNT(main.song_id) AS num_songs
 FROM
-    (SELECT song.year, 
-           CASE WHEN artist.latitude>0 THEN 'Northern' else 'Southern' END AS artist_emisphere,
-           user.gender,
-           songplay.song_id
-    FROM songplay JOIN song ON (songplay.song_id=song.song_id)
-                  JOIN artist ON (songplay.artist_id=artist.artist_id)
-                  JOIN user ON (songplay.user_id=user.user_id)) AS main
-GROUP BY CUBE (main.year, main.artist_emisphere, main.gender);
+    (SELECT s.year, 
+           CASE WHEN a.latitude>0 THEN 'Northern' else 'Southern' END AS artist_emisphere,
+           sp.song_id
+    FROM songplay sp JOIN songs s ON (sp.song_id=s.song_id)
+                  JOIN artists a ON (sp.artist_id=a.artist_id)
+    WHERE a.latitude IS NOT NULL AND
+          s.year > 0) AS main
+GROUP BY main.year, main.artist_emisphere;
+
 ```
  
  

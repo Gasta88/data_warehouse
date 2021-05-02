@@ -51,7 +51,7 @@ staging_songs_table_create = ("""CREATE TABLE IF NOT EXISTS songs_stg(song_id TE
 
 songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplay(songplay_id INTEGER IDENTITY(1,1) PRIMARY KEY,
                                                         start_time TIMESTAMP NOT NULL REFERENCES time(start_time) sortkey,
-                                                        user_id TEXT NOT NULL REFERENCES users(user_id),
+                                                        user_id INTEGER NOT NULL REFERENCES users(user_id),
                                                         level TEXT ,
                                                         song_id TEXT NOT NULL REFERENCES songs(song_id) distkey,
                                                         artist_id TEXT NOT NULL REFERENCES artists(artist_id),
