@@ -48,7 +48,6 @@ Query to check the number of songs listened by gender and level:
 SELECT u.gender,u.level, COUNT(sp.song_id) AS num_songs
 FROM songplay sp JOIN users u ON (sp.user_id=u.user_id)
 GROUP BY u.gender, u.level;
-
 ```
 
 Query the average length of the longest 25 songs played per artist:
@@ -60,7 +59,6 @@ FROM songplay sp JOIN artists a ON (sp.artist_id=a.artist_id)
 GROUP BY a.name
 ORDER BY avg_duration
 LIMIT 25;
-
 ```
 
 Query the amount of total songs played by year and artist from the Northern/Southern emisphere:
@@ -76,7 +74,6 @@ FROM
     WHERE a.latitude IS NOT NULL AND
           s.year > 0) AS main
 GROUP BY main.year, main.artist_emisphere;
-
 ```
  
  
