@@ -37,8 +37,11 @@ All files are in JSON format and these are manipulated via the `etl.py` script b
 
 ## How to run the project
 
-1. On console run `python create_tables.py`. Database and empty tables should be ready.
-2. After that run `python etl.py` to populate the tables with song and log data.
+1. Fill out the missing information from the `dwh.cfg` file.
+2. Run `create_cluster.py` to create the necessary infrastructure on AWS.
+3. On console run `python create_tables.py`. Database and empty tables should be ready.
+4. After that run `python etl.py` to populate the tables with song and log data.
+5. To clean up the infrastructure, run `create_cluster.py --delete`.
 
 ## Query examples
 
@@ -87,3 +90,4 @@ Important files inthe repository are:
 - `requirements.txt`: holds the requirements to launch a virtual environment.
 - `img`: contains the PNG of the star schema.
 - `dwh.cfg`: contains configuration parameters for AWS.
+- `create_cluster.py`: create/delete AWS Redshift cluster and IAM role.
